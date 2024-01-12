@@ -1,65 +1,66 @@
-const getState = ({ getStore, getActions, setStore }) => {
+const getState = ({ getStore, setStore }) => {
 	return {
 		store: {
+
+			favorites: [],
 			characters: [],
 			planets: [],
-			starships: [],
-			favorites: []
+			vehicles: [],
+			
 		},
 		actions: {
-			// obtener los personjaes
-			getAllCharacters: () => {
-				fetch("https://www.swapi.tech/api/people/")
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ characters: data.results })
-					})
-					.catch((error) => console.log(error))
+
+			getPlanets: () => {
+				fetch('https://swapi.dev/api/planets')
+					.then(res => res.json())
+					.then(data => setStore({ planets: data.results }))
+					.catch(err => console.error(err))
+			},
+			getVehicles: () => {
+				fetch('https://swapi.dev/api/vehicles')
+					.then(res => res.json())
+					.then(data => setStore({ vehicles: data.results }))
+					.catch(err => console.error(err))
 			},
 
-			getAllPlanets: () => {
-				fetch('https://www.swapi.tech/api/planets')
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ planets: data.results })
-					})
-					.catch((error) => console.log(error))
+			getCharacters: () => {
+				fetch('https://swapi.dev/api/people')
+					.then(res => res.json())
+					.then(data => setStore({ characters: data.results }))
+					.catch(err => console.error(err))
+			
 			},
 
-			getAllStarships: () => {
-				fetch('https://www.swapi.tech/api/starships')
-					.then((response) => response.json())
-					.then(data => {
-						setStore({ starships: data.results })
-					})
-					.catch((error) => console.log(error))
-			},
 
-			getPlanetsDetails: () => {
-				fetch(`https://www.swapi.tech/api/planets/${id}`).then(resp => resp.json())
-					.then(data => {
-						setPlanet(data)
-					})
+		addToFavorites: (item) => {
+			let store = getStore();
+			
+			let newFavorites = [...store.favorites, item];
+			setStore({ favorites: newFavorites });
+		},
 
-					.catch(error => {
-						console.log(error);
-					});
+		removeFromFavorites: (item) => {
+			let store = getStore();
+			let newFavorites = store.favorites.filter(fav => fav !== item);
+			setStore({ favorites: newFavorites });
+		},
+		toggleFavorite: (item) => {
+			let store = getStore();
+			let isFavorite = store.favorites.some(fav => fav === item);
 
+			if (isFavorite) {
+				let newFavorites = store.favorites.filter(fav => fav !== item);
+				setStore({ favorites: newFavorites });
+				console.log("eliminar favorito", newFavorites)
+			} else {
+				let newFavorites = [...store.favorites, item];
+				setStore({ favorites: newFavorites });
+				console.log("a favorito", newFavorites)
 			}
+		},
 
-			/* addFavorite: (item) => {
-				const favorite = getStore().favorites.concat(item);
-				setStore({ favorites: favorite });
-			},
-
-			deleteFavorite: (index) => {
-				const favorite = getStore().favorites.filter((_c, i) => {
-					return index !== i;
-				});
-				setStore({ favorites: favorite });
-			} */
-		}
 	}
+};
 };
 
 export default getState;
